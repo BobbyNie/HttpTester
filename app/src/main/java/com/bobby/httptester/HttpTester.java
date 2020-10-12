@@ -5,7 +5,9 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -22,12 +24,12 @@ public class HttpTester {
     private boolean runHttpTest = false;
     private String urlStr = "";
     private int threadCount;
-    private Thread mainThread ;
+    private Thread mainThread;
     private ExecutorService pool;
-    private MainActivity activity ;
- //   private int Interval
+    private MainActivity activity;
+    //   private int Interval
 
-    public HttpTester(final String urlStr, final int threadCount, final int interval,final MainActivity activity){
+    public HttpTester(final String urlStr, final int threadCount, final int interval, final MainActivity activity) {
         this.urlStr = urlStr;
         this.threadCount = threadCount;
         this.interval = interval;
@@ -39,47 +41,50 @@ public class HttpTester {
                     HttpTester.this.run();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
                 }
             }
         });
-        pool = Executors.newFixedThreadPool(threadCount*3);
+        pool = Executors.newFixedThreadPool(threadCount * 3);
     }
 
-    public void start(){
+    public void start() {
         runHttpTest = true;
         mainThread.start();
     }
 
-    public void stop(){
+    public void stop() {
         runHttpTest = false;
         mainThread.interrupt();
     }
 
+    static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss.SSS");
 
     public void run() throws InterruptedException, MalformedURLException {
-        while (runHttpTest){
+        while (runHttpTest) {
             final List<Future<String>> futureList = new ArrayList<Future<String>>();
-
-            for(int i =0 ;i < threadCount;i++) {
+            final String timeStr = sdf.format(new Date(System.currentTimeMillis()));
+            for (int i = 0; i < threadCount; i++) {
                 final int fi = i;
                 Future<String> future = pool.submit(new Callable<String>() {
                     @Override
                     public String call() throws Exception {
                         String r;
                         String oneUrlStr = urlStr;
-                        if(!oneUrlStr.contains("?")){
-                            oneUrlStr = oneUrlStr+ "?i="+fi;
-                        }else{
-                            oneUrlStr = oneUrlStr+ "&i="+fi;
+                        if (!oneUrlStr.contains("?")) {
+                            oneUrlStr = oneUrlStr + "?i=" + fi;
+                        } else {
+                            oneUrlStr = oneUrlStr + "&i=" + fi;
                         }
-                        oneUrlStr = oneUrlStr+"&t="+System.currentTimeMillis();
+                        oneUrlStr = oneUrlStr + "&t=" + timeStr;
 
                         URL url = new URL(urlStr);
                         HttpURLConnection conn = null;
                         try {
                             conn = (HttpURLConnection) url.openConnection();
-                            conn.setConnectTimeout(interval);
-                            conn.setReadTimeout(interval);
+                            conn.setConnectTimeout(interval * 1000);
+                            conn.setReadTimeout(interval * 1000);
                             conn.setRequestMethod("GET");
                             if (conn.getResponseCode() == 200) {
                                 r = "OK";
@@ -90,7 +95,6 @@ public class HttpTester {
                                     o = in.read(data);
                                 }
                                 in.close();
-                                conn.getOutputStream().close();
                             }
                             r = "" + conn.getResponseCode();
                         } catch (Exception e) {
@@ -106,14 +110,14 @@ public class HttpTester {
             pool.submit(new Runnable() {
                 @Override
                 public void run() {
-                    HashMap<String,Integer> statisticsMap = new HashMap<>();
-                    for(Future<String> future: futureList){
+                    HashMap<String, Integer> statisticsMap = new HashMap<>();
+                    for (Future<String> future : futureList) {
                         try {
-                            String s = future.get( interval, TimeUnit.SECONDS);
-                            if(statisticsMap.get(s) == null){
-                                statisticsMap.put(s,0);
+                            String s = future.get(interval, TimeUnit.SECONDS);
+                            if (statisticsMap.get(s) == null) {
+                                statisticsMap.put(s, 0);
                             }
-                            statisticsMap.put(s,statisticsMap.get(s)+1);
+                            statisticsMap.put(s, statisticsMap.get(s) + 1);
                         } catch (ExecutionException e) {
                             e.printStackTrace();
                         } catch (InterruptedException e) {
@@ -122,13 +126,13 @@ public class HttpTester {
                             e.printStackTrace();
                         }
                     }
-                    MainActivity.appendText2logText(""+statisticsMap.toString());
+                    MainActivity.appendText2logText(timeStr + ":" + statisticsMap.toString() + "\n");
 
                 }
             });
 
 
-            Thread.sleep(interval*1000);
+            Thread.sleep(interval * 1000);
         }
     }
 }
