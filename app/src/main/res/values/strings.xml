@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">HttpTester</string>
     <string name="testUrlTitle">TestUrl:</string>
-    <string name="DEFAULT_TEST_URL">https://aas.bocmacau.com/w/f5test.html?abc</string>
+    <string name="DEFAULT_TEST_URL">https://www.baidu.com?abc</string>
 </resources>
