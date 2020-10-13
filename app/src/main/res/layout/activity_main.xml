@@ -12,6 +12,7 @@
         android:layout_height="20dp"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="10dp"
+        android:gravity="center|right"
         android:text="@string/testUrlTitle"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -23,7 +24,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginTop="10dp"
         android:text="并发线程数:"
-        android:textAlignment="textEnd"
+        android:gravity="center|right"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/testUrlText"
         tools:text="并发线程数:" />
@@ -35,7 +36,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
         android:text="间隔时间:"
-        android:textAlignment="textEnd"
+        android:gravity="center|right"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toEndOf="@+id/threadsText"
         app:layout_constraintTop_toBottomOf="@+id/testUrlText"
@@ -64,7 +65,7 @@
         android:layout_marginTop="10dp"
         android:ems="10"
         android:inputType="number"
-        android:text="10"
+        android:text="1"
         app:layout_constraintStart_toEndOf="@+id/textView3"
         app:layout_constraintTop_toBottomOf="@+id/testUrlText" />
 
@@ -132,8 +133,8 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
         android:text="公网IP:"
+        android:gravity="center|right"
         android:textStyle="bold"
-        android:textAlignment="textEnd"
         android:textAllCaps="false"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/runBtn" />
