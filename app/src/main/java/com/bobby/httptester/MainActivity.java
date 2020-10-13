@@ -24,8 +24,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText testUrlText;
     private EditText threadsText;
     private EditText intervalText;
-    static private TextView logView;
-    static private OutputStreamWriter logFileWrite = null;
+    private TextView logView;
+    private OutputStreamWriter logFileWrite = null;
     private Button runBtn;
     private Button stopBtn;
     private HttpTester tester = null;
@@ -68,20 +68,19 @@ public class MainActivity extends AppCompatActivity {
     public void onClearBtnClick(View view) {
         logView.setText("");
     }
-
-    public synchronized static void appendText2logText(String str) {
-        StringBuffer sb = new StringBuffer(logView.getText());
+    StringBuffer sb = new StringBuffer();
+    public synchronized void appendText2logText(String str) {
         sb.insert(0, str);
-        if (sb.length() > 10 * 1024 * 1024) {
-            sb.setLength(10 * 1024 * 1024);
-        }
-        logView.setText(sb);
         try {
             logFileWrite.write(str);
             logFileWrite.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        if (sb.length() >  1024) {
+            sb.setLength( 1024);
+        }
+        logView.setText(sb);
     }
 
     @Override

@@ -60,7 +60,7 @@ public class HttpTester {
     }
 
     static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss.SSS");
-
+    private byte[] catcheBytes = new byte[10*1024*1024]; //10M缓存 丢弃数据,多线程写
     public void run() throws InterruptedException, MalformedURLException {
         while (runHttpTest) {
             final List<Future<String>> futureList = new ArrayList<Future<String>>();
@@ -89,10 +89,9 @@ public class HttpTester {
                             if (conn.getResponseCode() == 200) {
                                 r = "OK";
                                 InputStream in = conn.getInputStream();
-                                byte[] data = new byte[1024];
-                                int o = in.read(data);
+                                int o = in.read(catcheBytes);
                                 while (o > 0) {
-                                    o = in.read(data);
+                                    o = in.read(catcheBytes);
                                 }
                                 in.close();
                             }
@@ -126,12 +125,10 @@ public class HttpTester {
                             e.printStackTrace();
                         }
                     }
-                    MainActivity.appendText2logText(timeStr + ":" + statisticsMap.toString() + "\n");
+                    activity.appendText2logText(timeStr + ":" + statisticsMap.toString() + "\n");
 
                 }
             });
-
-
             Thread.sleep(interval * 1000);
         }
     }
