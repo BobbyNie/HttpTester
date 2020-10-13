@@ -7,6 +7,8 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.*;
@@ -38,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
     static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss.SSS");
     private String PUBLIC_IP_SERVICE_URL="https://api.ipify.org/";
 
+    Handler logViewHander,publicIpViewHander;
+
+
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -58,6 +63,22 @@ public class MainActivity extends AppCompatActivity {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+
+        publicIpViewHander = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                publicIpView.setText((CharSequence) msg.obj);
+            }
+
+        };
+
+        logViewHander = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                logView.setText((CharSequence) msg.obj);
+            }
+
+        };
     }
 
     public void onRunBtnClick(View view) {
@@ -87,7 +108,10 @@ public class MainActivity extends AppCompatActivity {
         if (sb.length() >  1024) {
             sb.setLength( 1024);
         }
-        logView.setText(sb);
+        Message msg = new Message();
+        msg.obj = sb;
+        logViewHander.sendMessage(msg);
+        //logView.setText(sb);
     }
 
     @Override
@@ -119,7 +143,10 @@ public class MainActivity extends AppCompatActivity {
                         int o = in.read(buff);
                         if(o > 0){
                             String ipInfo = "公网IP:"+new String(buff);
-                            publicIpView.setText(ipInfo);
+                            Message msg = new Message();
+                            msg.obj = ipInfo;
+                            publicIpViewHander.sendMessage(msg);
+                            //publicIpView.setText(ipInfo);
                             appendText2logText(ipInfo+"\n");
                         }
                         in.close();
