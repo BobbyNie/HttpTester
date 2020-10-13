@@ -42,6 +42,32 @@
         app:layout_constraintTop_toBottomOf="@+id/testUrlText"
         tools:text="间隔时间:" />
 
+
+
+    <TextView
+        android:id="@+id/connectTimeOut"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:text="连接超时:"
+        android:gravity="center|right"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/threadsText"
+        tools:text="连接超时:" />
+
+    <TextView
+        android:id="@+id/readTimeOut"
+        android:layout_width="65dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:text="读写超时:"
+        android:gravity="center|right"
+        app:layout_constraintStart_toEndOf="@+id/connectTimeOutText"
+        app:layout_constraintTop_toBottomOf="@+id/threadsText"
+        tools:text="读写超时:" />
+
     <EditText
         android:id="@+id/testUrlText"
         android:layout_width="0dp"
@@ -60,7 +86,7 @@
 
     <EditText
         android:id="@+id/threadsText"
-        android:layout_width="59dp"
+        android:layout_width="60dp"
         android:layout_height="40dp"
         android:layout_marginTop="10dp"
         android:ems="10"
@@ -70,8 +96,31 @@
         app:layout_constraintTop_toBottomOf="@+id/testUrlText" />
 
     <EditText
+        android:id="@+id/connectTimeOutText"
+        android:layout_width="60dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:ems="10"
+        android:inputType="number"
+        android:text="10"
+        app:layout_constraintStart_toEndOf="@+id/connectTimeOut"
+        app:layout_constraintTop_toBottomOf="@+id/threadsText" />
+
+
+    <EditText
+        android:id="@+id/readTimeOutText"
+        android:layout_width="60dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:ems="10"
+        android:inputType="number"
+        android:text="10"
+        app:layout_constraintStart_toEndOf="@+id/readTimeOut"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+    <EditText
         android:id="@+id/intervalText"
-        android:layout_width="83dp"
+        android:layout_width="60dp"
         android:layout_height="40dp"
         android:layout_marginTop="10dp"
         android:ems="10"
@@ -79,6 +128,7 @@
         android:text="10"
         app:layout_constraintStart_toEndOf="@+id/textView4"
         app:layout_constraintTop_toBottomOf="@+id/testUrlText" />
+
 
     <Button
         android:id="@+id/runBtn"
@@ -89,7 +139,7 @@
         android:onClick="onRunBtnClick"
         android:text="Run"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/intervalText" />
+        app:layout_constraintTop_toBottomOf="@+id/connectTimeOut" />
 
     <Button
         android:id="@+id/stopBtn"
@@ -100,7 +150,7 @@
         android:onClick="onStopBtnClick"
         android:text="Stop"
         app:layout_constraintStart_toEndOf="@+id/runBtn"
-        app:layout_constraintTop_toBottomOf="@+id/intervalText" />
+        app:layout_constraintTop_toBottomOf="@+id/connectTimeOut" />
 
     <TextView
         android:id="@+id/logView"
@@ -124,7 +174,7 @@
         android:onClick="onClearBtnClick"
         android:text="CLEAR"
         app:layout_constraintStart_toEndOf="@+id/stopBtn"
-        app:layout_constraintTop_toBottomOf="@+id/intervalText" />
+        app:layout_constraintTop_toBottomOf="@+id/connectTimeOut" />
 
     <TextView
         android:id="@+id/pubIp"

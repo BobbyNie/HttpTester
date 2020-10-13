@@ -29,8 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private Thread mainThread = null;
     private boolean run = false;
     private EditText testUrlText;
-    private EditText threadsText;
-    private EditText intervalText;
+    private EditText threadsText,intervalText,connectTimeOutText,readTimeOutText;
     private TextView logView;
     private TextView publicIpView;
     private OutputStreamWriter logFileWrite = null;
@@ -40,9 +39,14 @@ public class MainActivity extends AppCompatActivity {
     static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss.SSS");
     private String PUBLIC_IP_SERVICE_URL="https://api.ipify.org/";
 
-    Handler logViewHander,publicIpViewHander;
-
-
+    static class UpdateViewHander extends Handler{
+        @Override
+        public void handleMessage(Message msg) {
+            CharSequence cs = msg.getData().getCharSequence ("str");
+            ((TextView)msg.obj).setText(cs);
+        }
+    };
+    static Handler updateViewHander = new UpdateViewHander();
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -51,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         testUrlText = (EditText) findViewById(R.id.testUrlText);
         threadsText = (EditText) findViewById(R.id.threadsText);
+        connectTimeOutText = (EditText) findViewById(R.id.connectTimeOutText);
+        readTimeOutText = (EditText) findViewById(R.id.readTimeOutText);
         intervalText = (EditText) findViewById(R.id.intervalText);
         publicIpView = (TextView) findViewById(R.id.pubIp);
         runBtn = (Button) findViewById(R.id.runBtn);
@@ -63,29 +69,29 @@ public class MainActivity extends AppCompatActivity {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
-        publicIpViewHander = new Handler(){
-            @Override
-            public void handleMessage(Message msg) {
-                publicIpView.setText((CharSequence) msg.obj);
-            }
-
-        };
-
-        logViewHander = new Handler(){
-            @Override
-            public void handleMessage(Message msg) {
-                logView.setText((CharSequence) msg.obj);
-            }
-
-        };
     }
 
     public void onRunBtnClick(View view) {
         String testUrlStr = testUrlText.getText().toString();
         int threadsInt = Integer.valueOf(threadsText.getText().toString());
         int intervalInt = Integer.valueOf(intervalText.getText().toString());
-        tester = new HttpTester(testUrlStr, threadsInt, intervalInt, this);
+        int connectTimeOutInt= Integer.valueOf(connectTimeOutText.getText().toString());
+        int readTimeOutInt= Integer.valueOf(readTimeOutText.getText() .toString());
+        try {
+            //每次run  重新创建log 文件
+            if(logFileWrite != null){
+                logFileWrite.close();
+            }
+
+            logFileWrite = new OutputStreamWriter(new FileOutputStream(new File(Environment.getExternalStorageDirectory().getAbsolutePath()
+                    , "runlog" + sdf.format(new Date(System.currentTimeMillis())) + ".log")));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        tester = new HttpTester(testUrlStr, threadsInt, intervalInt,connectTimeOutInt, readTimeOutInt,this);
         tester.start();
         runBtn.setClickable(false);
         stopBtn.setClickable(true);
@@ -108,10 +114,17 @@ public class MainActivity extends AppCompatActivity {
         if (sb.length() >  1024) {
             sb.setLength( 1024);
         }
-        Message msg = new Message();
-        msg.obj = sb;
-        logViewHander.sendMessage(msg);
+        updateViewByHander(logView,sb);
         //logView.setText(sb);
+    }
+
+    private void updateViewByHander(View view,CharSequence str) {
+        Message msg = new Message();
+        msg.obj = view;
+        Bundle bundle = new Bundle();
+        bundle.putCharSequence("str",str);
+        msg.setData(bundle);
+        updateViewHander.sendMessage(msg);
     }
 
     @Override
@@ -143,10 +156,7 @@ public class MainActivity extends AppCompatActivity {
                         int o = in.read(buff);
                         if(o > 0){
                             String ipInfo = "公网IP:"+new String(buff);
-                            Message msg = new Message();
-                            msg.obj = ipInfo;
-                            publicIpViewHander.sendMessage(msg);
-                            //publicIpView.setText(ipInfo);
+                            updateViewByHander(publicIpView,ipInfo);
                             appendText2logText(ipInfo+"\n");
                         }
                         in.close();

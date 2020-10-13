@@ -23,17 +23,22 @@ public class HttpTester {
     private int interval;
     private boolean runHttpTest = false;
     private String urlStr = "";
-    private int threadCount;
+    private int threadCount,connectTimeOutInt,readTimeOutInt;
     private Thread mainThread;
     private ExecutorService pool;
     private MainActivity activity;
     //   private int Interval
 
-    public HttpTester(final String urlStr, final int threadCount, final int interval, final MainActivity activity) {
+    public HttpTester(final String urlStr, final int threadCount, final int interval,final int connectTimeOutInt ,final int readTimeOutInt,final MainActivity activity) {
         this.urlStr = urlStr;
         this.threadCount = threadCount;
         this.interval = interval;
         this.activity = activity;
+        this.connectTimeOutInt = connectTimeOutInt;
+        this.readTimeOutInt = readTimeOutInt;
+    }
+
+    public void start() {
         mainThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -47,9 +52,7 @@ public class HttpTester {
             }
         });
         pool = Executors.newFixedThreadPool(threadCount * 3);
-    }
 
-    public void start() {
         runHttpTest = true;
         mainThread.start();
     }
@@ -57,6 +60,7 @@ public class HttpTester {
     public void stop() {
         runHttpTest = false;
         mainThread.interrupt();
+        pool.shutdown();
     }
 
     static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss.SSS");
@@ -83,8 +87,8 @@ public class HttpTester {
                         HttpURLConnection conn = null;
                         try {
                             conn = (HttpURLConnection) url.openConnection();
-                            conn.setConnectTimeout(interval * 1000);
-                            conn.setReadTimeout(interval * 1000);
+                            conn.setConnectTimeout(connectTimeOutInt * 1000);
+                            conn.setReadTimeout(readTimeOutInt * 1000);
                             conn.setRequestMethod("GET");
                             if (conn.getResponseCode() == 200) {
                                 r = "OK";
@@ -112,7 +116,7 @@ public class HttpTester {
                     HashMap<String, Integer> statisticsMap = new HashMap<>();
                     for (Future<String> future : futureList) {
                         try {
-                            String s = future.get(interval, TimeUnit.SECONDS);
+                            String s = future.get(connectTimeOutInt+readTimeOutInt+1, TimeUnit.SECONDS);
                             if (statisticsMap.get(s) == null) {
                                 statisticsMap.put(s, 0);
                             }
