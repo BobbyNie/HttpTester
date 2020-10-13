@@ -66,8 +66,6 @@ public class MainActivity extends AppCompatActivity {
         int intervalInt = Integer.valueOf(intervalText.getText().toString());
         tester = new HttpTester(testUrlStr, threadsInt, intervalInt, this);
         tester.start();
-//        appendText2logText(System.currentTimeMillis()+":"+testUrlStr+":"+threadsInt+":"+intervalInt+"\n");
-
         runBtn.setClickable(false);
         stopBtn.setClickable(true);
         appendText2logText(sdf.format(new Date(System.currentTimeMillis())) + ":started!\n");
@@ -120,7 +118,9 @@ public class MainActivity extends AppCompatActivity {
                         InputStream in = conn.getInputStream();
                         int o = in.read(buff);
                         if(o > 0){
-                            publicIpView.setText("公网IP:"+new String(buff));
+                            String ipInfo = "公网IP:"+new String(buff);
+                            publicIpView.setText(ipInfo);
+                            appendText2logText(ipInfo+"\n");
                         }
                         in.close();
                     }
