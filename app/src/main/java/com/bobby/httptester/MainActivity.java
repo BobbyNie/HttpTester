@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClearBtnClick(View view) {
+        sb.setLength(0);
         logView.setText("");
     }
     StringBuffer sb = new StringBuffer();
