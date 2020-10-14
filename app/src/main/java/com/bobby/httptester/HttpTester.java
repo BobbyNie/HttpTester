@@ -83,7 +83,7 @@ public class HttpTester {
                         }
                         oneUrlStr = oneUrlStr + "&t=" + timeStr;
 
-                        URL url = new URL(urlStr);
+                        URL url = new URL(oneUrlStr);
                         HttpURLConnection conn = null;
                         try {
                             conn = (HttpURLConnection) url.openConnection();
