@@ -63,7 +63,7 @@ public class HttpTester {
         pool.shutdown();
     }
 
-    static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss.SSS");
+    static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
     private byte[] catcheBytes = new byte[10*1024*1024]; //10M缓存 丢弃数据,多线程写
     public void run() throws InterruptedException, MalformedURLException {
         while (runHttpTest) {

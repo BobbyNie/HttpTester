@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private Button stopBtn;
     private HttpTester tester = null;
     static SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss.SSS");
+    static SimpleDateFormat yyyyMMdd = new SimpleDateFormat("yyyy-MM-dd ");
     private String PUBLIC_IP_SERVICE_URL="https://api.ipify.org/";
 
     static class UpdateViewHander extends Handler{
@@ -104,18 +105,24 @@ public class MainActivity extends AppCompatActivity {
     }
     StringBuffer sb = new StringBuffer();
     public synchronized void appendText2logText(String str) {
-        sb.insert(0, str);
-        try {
-            logFileWrite.write(str);
-            logFileWrite.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(str != null) {
+            //log with yyyyMMdd
+            try {
+                logFileWrite.write(str);
+                logFileWrite.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (sb.length() > 1024) {
+                sb.setLength(1024);
+            }
+            //print without yyyyMMdd
+            if(str.startsWith(yyyyMMdd.format(new Date()))){
+                str = str.substring(11);
+            }
+            sb.insert(0, str);
+            updateViewByHander(logView, sb);
         }
-        if (sb.length() >  1024) {
-            sb.setLength( 1024);
-        }
-        updateViewByHander(logView,sb);
-        //logView.setText(sb);
     }
 
     private void updateViewByHander(View view,CharSequence str) {
