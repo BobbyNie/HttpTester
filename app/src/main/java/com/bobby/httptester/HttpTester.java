@@ -64,6 +64,7 @@ public class HttpTester {
     }
 
     static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    static SimpleDateFormat urlsdf = new SimpleDateFormat("yyyyMMddHHmmss.SSS");
     private byte[] catcheBytes = new byte[10*1024*1024]; //10M缓存 丢弃数据,多线程写
     public void run() throws InterruptedException, MalformedURLException {
         while (runHttpTest) {
@@ -81,7 +82,7 @@ public class HttpTester {
                         } else {
                             oneUrlStr = oneUrlStr + "&i=" + fi;
                         }
-                        oneUrlStr = oneUrlStr + "&t=" + timeStr;
+                        oneUrlStr = oneUrlStr + "&t=" + urlsdf.format(new Date(System.currentTimeMillis()));
 
                         URL url = new URL(oneUrlStr);
                         HttpURLConnection conn = null;
