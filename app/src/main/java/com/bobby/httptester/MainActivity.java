@@ -86,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
 
             logFileWrite = new OutputStreamWriter(new FileOutputStream(new File(Environment.getExternalStorageDirectory().getAbsolutePath()
                     , "runlog" + sdf.format(new Date(System.currentTimeMillis())) + ".log")));
+            logFileWrite.write("testUrl:"+testUrlStr+"\n");
+            logFileWrite.flush();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
